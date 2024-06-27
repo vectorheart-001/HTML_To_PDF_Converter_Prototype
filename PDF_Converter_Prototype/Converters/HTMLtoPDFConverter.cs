@@ -1,7 +1,5 @@
 ﻿using OpenQA.Selenium;
 using OpenQA.Selenium.Chrome;
-using System;
-using System.IO;
 namespace PDF_Converter_Prototype.Converters
 {
     public class HTMLtoPDFConverter
@@ -14,13 +12,16 @@ namespace PDF_Converter_Prototype.Converters
         public byte[] PrintHTMLToPDF()
         {
             _chromeOptions = new ChromeOptions();
-            _chromeOptions.AddArguments("headless"); //your chrome driver needs run in headless!
+            _chromeOptions.AddArguments("--no-sandbox");
+            _chromeOptions.AddArgument("--disable-dev-shm-usage");
+            _chromeOptions.AddArgument("--whitelisted-ips=");
+            _chromeOptions.AddArguments("--headless");
 
             //creating webdriver
             _driver = new ChromeDriver(_chromeOptions);
 
             //go to the website
-            _driver.Navigate().GoToUrl("file:///C:/Users/Pepo/Desktop/Projects/PDF_Converter_Prototype/PDF_Converter_Prototype/Views/example.html");
+            _driver.Navigate().GoToUrl("https://www.eveliko.com/");
 
             //defining configurations for de printing
             PrintOptions printOptions = new PrintOptions
@@ -31,9 +32,11 @@ namespace PDF_Converter_Prototype.Converters
             //printing...
             PrintDocument printDocument = _driver.Print(printOptions);
 
+            return printDocument.AsByteArray;
+
             //saving the file
-            printDocument.SaveAsFile(printFinalPath);
-            return File.ReadAllBytes(printFinalPath);
+            //printDocument.SaveAsFile(printFinalPath);
+            //return File.ReadAllBytes(printFinalPath);
         }
         
 

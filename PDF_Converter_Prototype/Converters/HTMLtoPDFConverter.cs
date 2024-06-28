@@ -20,7 +20,7 @@ namespace PDF_Converter_Prototype.Converters
             _driver = new ChromeDriver(_chromeOptions);
 
             //go to the website
-            _driver.Navigate().GoToUrl("file:///C:/Users/Pepo/Desktop/Projects/PDF_Converter_Prototype/PDF_Converter_Prototype/Views/example.html");
+            _driver.Navigate().GoToUrl("https://www.eveliko.com/");
 
             //defining configurations for de printing
             PrintOptions printOptions = new PrintOptions

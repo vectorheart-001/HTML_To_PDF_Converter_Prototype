@@ -1,22 +1,20 @@
 ﻿using OpenQA.Selenium;
 using OpenQA.Selenium.Chrome;
+using System.Text.RegularExpressions;
+
 namespace PDF_Converter_Prototype.Converters
 {
     public class HTMLtoPDFConverter
     {
         public ChromeOptions _chromeOptions;
         public WebDriver _driver;
-        public static string fileName = "PDF_Example";
-        public static string printFinalPath = System.IO.Directory.GetCurrentDirectory() + @$"\{fileName}";
-
         public IHttpContextAccessor _contextAccessor = null;
-
         public HTMLtoPDFConverter(IHttpContextAccessor contextAccessor)
         {
             _contextAccessor = contextAccessor;
         }
 
-        public byte[] PrintHTMLToPDF()
+        public async Task<(byte[],string)> PrintHTMLToPDF()
         {
             try
             {
@@ -44,20 +42,27 @@ namespace PDF_Converter_Prototype.Converters
                 {
                     Orientation = PrintOrientation.Portrait
                 };
+             
 
                 //printing...
                 PrintDocument printDocument = _driver.Print(printOptions);
+                
                 try
                 {
                     _driver.Quit();
                 }
                 catch { } // On Purpose, we want to ensure Quit doesn't interupt already rendered doc.
-                return printDocument.AsByteArray;
+                string pattern = @"https?:\/\/([^\/]+\/.*)";
+                Match match = Regex.Match(url, pattern);
+                string domainName = match.Groups[1].Value;
+                domainName = domainName.Replace('.', '_').Replace('/','_');
+                return  (printDocument.AsByteArray,domainName);
             }
             catch
             {
                 _driver.Quit();
-                return null;
+                //this is stupid i shouldn't be doing this
+                return (null,null);
             }
             //saving the file
             //printDocument.SaveAsFile(printFinalPath);

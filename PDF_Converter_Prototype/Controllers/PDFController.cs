@@ -1,5 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
 using PDF_Converter_Prototype.Converters;
+using System;
+using System.Text.RegularExpressions;
 
 namespace PDF_Converter_Prototype.Controllers
 {
@@ -14,11 +16,11 @@ namespace PDF_Converter_Prototype.Controllers
         }
 
         [HttpGet(Name = "GET-PDF")]
-        public FileContentResult Get_PDF()
+        public async Task<FileContentResult> Get_PDF()
         {
             var converter = new HTMLtoPDFConverter(_accessor);
-            var bytes = converter.PrintHTMLToPDF();
-            return File(bytes, "application/pdf", "PDF_Example.pdf");
+            var res = await converter.PrintHTMLToPDF();
+            return File(res.Item1, "application/pdf", $"{res.Item2}.pdf");
         }
     }
 }
